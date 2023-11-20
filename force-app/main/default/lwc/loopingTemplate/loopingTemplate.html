@@ -1,0 +1,42 @@
+<template>
+    <lightning-card title="Looping Template">
+        <div class="slds-m-around_medium">
+            <template for:each={carlist} for:item="car">
+                <div key={key}>{car}</div>
+            </template>
+        </div>
+    </lightning-card>
+
+    <lightning-card title="Looping Template for each with array of Object">
+        <div class="slds-m-around_medium">
+            <template for:each={bestcar} for:item="ite">
+                <div key={ite.id}>{ite.name} {ite.speed}</div>
+            </template>
+        </div>
+    </lightning-card>
+
+    <lightning-card title="Iterator Template">
+        <div class="slds-m-around_medium">
+            <template iterator:vehicle={bestcar}>
+                <div key={vehicle.value.name}>
+                    <ul >
+                        <template lwc:if={vehicle.first}>
+                            <div>
+                                <strong> This are List for Car Companies</strong>
+                            </div>
+                        </template>
+                        <li>
+                            <strong>{vehicle.value.name}</strong><br/>
+                            {vehicle.value.speed} 
+                        </li>
+                        <template lwc:if={vehicle.last}>
+                            <div>
+                                <strong> Thanks for your time</strong>
+                            </div>
+                        </template>
+                    </ul>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

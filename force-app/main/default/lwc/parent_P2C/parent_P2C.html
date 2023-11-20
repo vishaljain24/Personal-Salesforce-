@@ -1,0 +1,9 @@
+<template>
+    <lightning-card title="I'm Parent Component with api Prop." icon-name="standard:account">
+        <div class="slds-m-around_medium">
+            <lightning-input type="number" value={percentage} onchange={handlechange}></lightning-input>
+            <br/>
+            <c-child-topcc percentage={percentage}></c-child-topcc>
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,11 @@
+<template>
+    <div>Status</div>
+    <div><slot name="first"></slot></div>  <!-- Unnamed slot -->
+
+    <div>What's your role</div>
+    <div><slot name="second"></slot></div>  <!-- Named slot -->
+
+    <footer class="slds-card_footer slds-hide">
+        <slot name="footer" onslotchange={handlefooterChange}></slot>
+    </footer>
+</template> 

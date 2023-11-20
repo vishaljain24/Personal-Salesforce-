@@ -1,0 +1,13 @@
+<template>
+    <lightning-card title="Wire With Property" icon-name="standard:account">
+        <template if:true={accounts.data}>
+            <div class="slds-m-around_medium">
+                <template for:each={accounts.data} for:item="acc">
+                   <lightning-layout key={acc.id}>
+                        <lightning-layout-item>{acc.Name} </lightning-layout-item>
+                   </lightning-layout>
+                </template>
+            </div>
+        </template>    
+    </lightning-card>
+</template>

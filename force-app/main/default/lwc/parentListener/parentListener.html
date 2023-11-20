@@ -1,0 +1,11 @@
+<template>
+    <lightning-card title="I'm Parent Listener" icon-name="utility:user">
+        <div class="slds-m-around_medium">
+            {msg}       
+            <br/>
+            Count of Clicks: {Count}
+            <br/>
+            <c-child-communicaton onincreasecount={handleeventchange}></c-child-communicaton>
+        </div>
+    </lightning-card>
+</template>

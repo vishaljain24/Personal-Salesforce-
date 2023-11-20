@@ -1,0 +1,20 @@
+<template>
+    <div class="slds-m-around_medium">
+        <lightning-card title="Two Way Data Binding">
+            <lightning-input type="text" label="Enter City Name" onkeyup={changeHandler}></lightning-input>
+            <div>{role} is key tech in {city}</div>
+        </lightning-card>
+    </div>
+    <div class="slds-m-around_medium">
+        <lightning-card title="Track properties">
+            <lightning-input type="text" label="Enter Name" onkeyup={trackHandler}></lightning-input>
+            <div>{obj.name} is Hard Working</div>
+        </lightning-card>
+    </div>
+    <div class="slds-m-around_medium">
+        <lightning-card title="Getter Demo">
+            <div>{multiplyOut}</div>
+            <div>{arrayEle}</div>
+        </lightning-card>
+    </div>
+</template>

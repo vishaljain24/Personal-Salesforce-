@@ -1,0 +1,15 @@
+/* There are three way to apply style through CSS file ---- Element,Classes,Pseudo */
+
+p{
+    color:green;
+    font-size:30px;
+    border: 1px solid red;
+}
+.userstyle{
+    color:pink;
+    font-size: 20px;
+}
+.userstyle:hover{
+    color: green;
+    font-size: 30px;
+}   

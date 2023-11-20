@@ -1,0 +1,424 @@
+Trigger Questions:-
+
+Trigger StudentAddress on Student__c (before insert,before udpate)
+{
+    if(Trigger.isInsert && Trigger.isBefore) 
+    {
+        for(Student__c std: Trigger.new)
+        {
+            if(std.address__c == null)
+            {
+                std.address__c='Default Address insert';
+            }
+        }
+    }
+    if(Trigger.isUpdate && Trigger.isBefore) 
+    {
+        for(Student__c std: Trigger.new)
+        {
+            if(std.address__c == null)
+            {
+                std.address__c='Default Address update';
+            }
+        }
+    }
+}
+/////////////////////////////////////////////////////
+
+Trigger Genderupdate on Student__c(before insert, before update)
+{
+    if(trigger.isBefore && trigger.isInsert)
+    {
+        for(Student__c std: Trigger.new)
+        {
+            if(std.gender__c == 'Male')
+                std.name='Mr. '+std.name;
+            
+            if(std.gender__c == 'Female')
+                std.name='Mrs. '+std.name
+        }
+    }
+}
+//////////////////////////////////////////////////////
+
+Trigger DeleteRecord on Account(Before delete)
+{
+    if(Trigger.isDelete)
+    {
+        for(Account acc: trigger.old)
+        {
+            acc.addError("No Account can't deleted");
+        }
+    }
+}
+///////////////////////////////////////////////////// Prevent Duplicate Records
+
+Trigger duplicateRecord on Account(before insert )
+{
+    Set<String> accSet=new Set<String>();
+
+    for(Account acc: Trigger.new)
+    {
+        accSet.add(acc.name);
+    }
+    
+    List<Account> acclist=[Select id,name from Account where name in :accSet];
+
+    Map<String,Account> mapacc=new Map<String,Account>();
+
+    for(Account acc:acclist)
+    {
+        mapacc.put(acc.name,acc);
+    }
+
+    for(Account ac: Trigger.new)
+    {
+        if(mapacc.get(ac.name)!=null)
+            ac.addError('Duplicate Record');
+    }
+}
+////////////////////////////////////////////////////////
+
+Trigger delcontact on Account(before Insert)
+{
+    Set<String> accset=new Set<String>();
+
+    for(Account acc:Trigger.new) 
+    {
+        accset.add(acc.name);
+    }
+
+    List<Contacts> conlist=[Select id,name from Contacts where name in :accset];
+
+    if(conlist.size()>0  && conlist!=null)
+    {
+        Delete conlist;
+    }
+
+}
+////////////////////////////////////////////////////////// 
+
+Trigger backObjectTrg on Facility(before update)
+{
+    list<Facility_backup__c> listfc=new List<Facility_backup__c>();
+
+    if(Trigger.isUpdate)
+    {
+        for(Facility fac:Trigger.old)
+        {
+        if((fac.name != Trigger.newmap.get(fac.id).name) &&
+            (fac.email != Trigger.newmap.get(fac.id).email__c))
+            Facility_backup__c back=new Facility_backup__c();
+            back.name=fac.name;
+            back.email=fac.email;
+            listfc.add(back);
+        }
+    insert listfc;
+    }
+}
+////////////////////////////////////////////////////////////
+
+Trigger caseStatusTrgg on Case(before update)
+{
+    for(Case cs:Trigger.new)
+    {
+        if(cs.status__c=='Working')
+        {
+            cs.owner=cs.lastmodifiedbyId;
+        }
+    }
+}
+//////////////////////////////////////////////////////////// 
+
+Trigger updateContactTrgg on Account(before update)
+{
+    Map<id,Account>  accMap=new Map<id,Account>();
+    for(Account acc:Trigger.new)
+    {
+        if(Trigger.oldMap.get(acc.id).phone__c!= acc.phone__c)
+        accMap.put(acc.id,acc);
+    }
+
+    List<Contact> conlist=[Select id,phone from Contacts where accountId = :accMap.keySet()];
+    List<Contact> finalconlist=new List<Contact>();
+
+    if(!conlist.isEmpty())
+    {
+    for(Contact con:conlist)
+    {
+        if(con.phone__c ==null && (con.phone__c != Trigger.oldmap.get(con.id).phone__c))
+        {
+            con.phone__c= accMap.get(con.accountId).phone__c;
+            finalconlist.add(con);
+        }
+    }
+    }
+    update finalconlist;
+}
+
+/////////////////////////////////////////////////////////// After Triggers
+
+Trigger OppCreateTrgg on Opportunity(After insert,after update )
+{
+    List<Opportunity> opplist=new List<Opportunity>();
+
+    for(Opportunity opp: Trigger.new)
+    {
+        opplist.add(opp.id);
+    }
+
+    List<Opportunity_child__c> finalist=new List<Opportunity_child__c>();
+
+    for(Opportunity op: opplist)
+    {
+    if( Trigger.oldMap.get(op.id).stage__c!='Closed Won' && op.stage__c=='Closed Won') /////////-- Old Value Check 
+        {
+            Opportunity_child__c opchild = new Opportunity_child__c();
+            opchild.name= op.name;
+            opchild.email=op.email;
+            opchild.OpportunityId =op.id;
+            finalist.add(opchild);
+        }
+    }
+    Insert finalist;
+}
+
+////////////////////////////////////////////////////////
+
+Trigger accCreate on Account(After Insert)
+{
+    List<Contact> conlist=new List<Contact>();
+    List<Opportunity> opplist=new List<Opportunity>();
+    for(Account acc:Trigger.new)
+    {
+        Contact con=new Contact();
+        con.name=acc.name;
+        con.email=acc.email;
+        con.gender=acc.gender;
+        con.accountID=acc.id;
+        conlist.add(con);
+
+        Opportunity opp=new Opportunity();
+        opp.name=acc.name;
+        opp.gender=acc.gender;
+        opp.accountID=acc.id;
+        opplist.add(opp);
+    }
+    Insert conlist;
+    Insert opplist;
+}
+
+////////////////////////////////////////////////////////////////////
+
+Trigger udpateContrgg on Account(After update)
+{
+    Map<id,Account> acclist=new Map<id,Account>();
+    List<Contact> conlistfinal=new List<Contact>();
+    for(Account acc: Trigger.new)
+    {
+        if(trigger.oldmap.get(acc.id).billing_address != acc.billing_address)
+        acclist.add(acc.id,acc);
+    }
+
+    List<Contact> conlist=[Select id,otheraddress from Contacts where accountId = :acclist.keylist()];
+    
+    for(Contact con: conlist)
+    {
+        con.otheraddress = acclist.get(con.accountId).billing_address;
+        conlistfinal.add(con);
+    }
+    udpate conlistfinal;
+}
+
+///////////////////////////////////////////////////////////////////////
+
+Whenever contact phone update ---> update account phone
+
+trigger contupdateTrgg on Contact(After update)
+{
+    Map<id,contact> conlist=new Map<id,Contact>();
+
+    for(Contact con: Trigger.new)
+    {
+        if(trigger.oldmap.get(con.id).phone != con.phone)
+        conlist.put(con.AccountId,con);  
+    }
+
+    List<Account> acclist= [Select id,phone from Account where id =:conlist.keyset()];
+    List<Account> acclistfinal=new List<Account>();
+    for(Account acc: acclist)
+    {
+        acc.phone=conlist.get(acc.id).phone;
+        acclistfinal.add(acc);
+    }
+    Update acclistfinal;
+}
+
+////////////////////////////////////////////////////////z/////////////////////
+
+Trigger deleteCont on Account(After Delete)
+{
+    List<Account> acclist=new List<Account>();
+
+    for(Account acc: Trigger.old)
+    {
+        acclist.add(acc.id);
+    }
+
+    List<Contact> conlist=[Select  id,name from Contact where accountID= :acclist];
+
+    if(!conlist.isEmpty())
+    {
+        Delete conlist;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////
+
+Trigger facultyundelete on Facility(After Undelete)
+{
+    List<Facility> faclist=new List<Facility>();
+
+    for(Facility fac:Trigger.new)
+    {
+        faclist.add(fac.id);
+    }
+
+    List<Course> cusList=[Select id from Course where faclityId= :faclist all rows];
+
+    if(!cusList.isEmpty())
+    {
+       UNDELETE cusList;
+    }
+}
+
+//////////////////////////////////////////////////////////////// Recursive trigger
+
+Trigger contTrgg on Contact (After update)
+{
+    Id conId;
+
+    for(Contact con:Trigger.new)
+    {
+        conId=con.id;
+    }
+
+    List<Contact> conlist=[Select id,name,email from Contact where id!= :conId LIMIT 1];
+
+    if(!conlist.isEmpty())
+    {
+        conlist.Email ='ab@gmail.com';
+        udpate conlist;
+    }
+}
+                                                               ---------
+to avoid Recursiveness write apex class 
+
+public Class Recursiveclass
+{
+    public static boolean flag=true;
+}
+                                                               ---------
+Trigger contTrgg on Contact (After update)
+{
+    if(Recursiveclass.flag ==true)
+    {
+        Recursiveclass.flag=false;
+        Id conId;
+
+        for(Contact con:Trigger.new)
+        {
+            conId=con.id;
+        }
+
+        List<Contact> conlist=[Select id,name,email from Contact where id!= :conId LIMIT 1];
+
+        if(!conlist.isEmpty())
+        {
+            conlist.Email ='ab@gmail.com';
+            udpate conlist;
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////
+
+Trigger accTrgg on Account (After Insert)
+{
+    Map<Id,integer> mapacc = new Map<Id,integer>();
+
+    for(Account acc: Trigger.new)
+    {
+        mapacc.put(acc.id,acc.no_of_contact);
+    }
+    
+    List<Contact> confinal = new List<Contact>();
+
+    if(mapacc!=null && mapacc.size() >0)
+    {
+        for(Account a: mapacc)
+        {
+            for(Integer i=1; i<= mapacc.get(a.id).no_of_contact;i++)
+            {
+                Contact con=new Contact();
+                con.Name = 'Contactname'+i;
+                con.Email= 'abc@gmail.com';
+                con.accountid=a.id;
+                confinal.add(con);
+            }
+        }
+        INSERT confinal;
+    }
+}
+
+///////////////////////////////////////////////////////////// Update No of Contact
+
+Trigger contrgg on Contact(after insert, after update)
+{
+    Set<id> acclist=new Set<Id>();
+
+    for(Contact con: Trigger.new)
+    {
+        if(con.accountID!=null)
+        acclist.add(con.accountID);
+    }
+
+    for(Contact con:Trigger.old)
+    {
+        if(con.accountId !=null)
+        acclist.add(con.accountId);     
+    }
+
+    List<Account> acc=[Select id,no_of_contact,(Select id from Contacts) from Account where id =:acclist]
+
+    if(!acc.isEmpty())
+    {
+        for(Account a: acc)
+        {
+            a.no_of_contact= acc.contacts.size();
+        }
+    update acc;
+    }
+}
+
+/////////////////////////////////////////////////////////////////////
+
+Trigger accphone on Account(after insert,after update)
+{
+    Map<id,Account> accmap=new Map<is,Account>();
+
+    for(Account acc: trigger.new)
+    {
+        if(acc.checked ==true && (trigger.oldmap.get(acc.id).phone != acc.phone))
+            accmap.put(acc.id,acc);
+    }
+
+    List<Contact> conlist=[Select id from Contacts where accountID =: accmap.keyset()];
+    List<Contact> finalupdate=new List<Contact>();
+    for(Contact con: conlist) 
+    {
+        con.phone = accmap.get(con.accountId).phone;
+        finalupdate.add(con);
+    }
+    insert finalupdate;
+}

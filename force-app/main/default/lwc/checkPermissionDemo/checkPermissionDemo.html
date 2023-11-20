@@ -1,0 +1,19 @@
+<template>
+    <lightning-card title="User Permission Demo">
+        <template if:true={hasViewAllDataAvialable}>
+            <p>Hurray!! I have a User Permission</p>
+        </template>
+        <template if:false={hasViewAllDataAvialable}>
+            <p>Opps!! I don't have a User permission</p>
+        </template>
+    </lightning-card>
+
+    <lightning-card title="Custom Permission Demo">
+        <template if:true={hasCustompermission}>
+            <p>Hurray!! I have a Custom Permission</p>
+        </template>
+        <template if:false={hasViewAllDataAvialable}>
+            <p>Opps!! I don't have a Custom permission</p>
+        </template>
+    </lightning-card>
+</template>  

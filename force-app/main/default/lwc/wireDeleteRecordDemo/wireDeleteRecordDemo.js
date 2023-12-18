@@ -17,7 +17,7 @@ export default class WireDeleteRecordDemo extends LightningElement
         }).catch(error=>{
             console.error(error)
             this.showToast("Error!!","Error Occured",'error')
-        })
+        }) 
     }
 
     showToast(title,message,variant)

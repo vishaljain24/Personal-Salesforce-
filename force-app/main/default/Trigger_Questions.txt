@@ -6,14 +6,14 @@ Trigger StudentAddress on Student__c (before insert,before udpate)
     {
         for(Student__c std: Trigger.new)
         {
-            if(std.address__c == null)
+            if(std.address__c == null) 
             {
                 std.address__c='Default Address insert';
             }
         }
     }
-    if(Trigger.isUpdate && Trigger.isBefore) 
-    {
+    if(Trigger.isUpdate && Trigger.isBefore)  
+    { 
         for(Student__c std: Trigger.new)
         {
             if(std.address__c == null)
@@ -89,8 +89,8 @@ Trigger delcontact on Account(before Insert)
     }
 
     List<Contacts> conlist=[Select id,name from Contacts where name in :accset];
-
-    if(conlist.size()>0  && conlist!=null)
+  
+    if(conlist.size()>0  && conlist!=null && !conlist.isEmpty())
     {
         Delete conlist;
     }
@@ -144,14 +144,14 @@ Trigger updateContactTrgg on Account(before update)
 
     if(!conlist.isEmpty())
     {
-    for(Contact con:conlist)
-    {
-        if(con.phone__c ==null && (con.phone__c != Trigger.oldmap.get(con.id).phone__c))
+        for(Contact con:conlist)
         {
-            con.phone__c= accMap.get(con.accountId).phone__c;
-            finalconlist.add(con);
+            if(con.phone__c ==null && (con.phone__c != Trigger.oldmap.get(con.id).phone__c))
+            {
+                con.phone__c= accMap.get(con.accountId).phone__c;
+                finalconlist.add(con);
+            }
         }
-    }
     }
     update finalconlist;
 }
@@ -304,11 +304,16 @@ Trigger contTrgg on Contact (After update)
     }
 
     List<Contact> conlist=[Select id,name,email from Contact where id!= :conId LIMIT 1];
-
+    List<contact> finalupd=new List<contact>(); 
     if(!conlist.isEmpty())
     {
-        conlist.Email ='ab@gmail.com';
-        udpate conlist;
+        for(Contact con : conlist)
+        {
+            con.Email ='ab@gmail.com';
+            finalupd.add(con);
+        }
+        
+        udpate finalupd;
     }
 }
                                                                ---------

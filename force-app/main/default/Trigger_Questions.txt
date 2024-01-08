@@ -418,7 +418,7 @@ Trigger accphone on Account(after insert,after update)
             accmap.put(acc.id,acc);
     }
 
-    List<Contact> conlist=[Select id from Contacts where accountID =: accmap.keyset()];
+    List<Contact> conlist=[Select id from Contacts where accountID = :accmap.keyset()];
     List<Contact> finalupdate=new List<Contact>();
     for(Contact con: conlist) 
     {
@@ -427,3 +427,56 @@ Trigger accphone on Account(after insert,after update)
     }
     insert finalupdate;
 }
+
+
+Trigger acctrg on Account(After Update)
+{
+    Map<String,Account> accMap=new Map<String,Account>();
+    if(Trigger.isAfter && Trigger.isUpdate)
+    {
+        for(Account acc: Trigger.new)
+        {
+            if(acc.phone!= (Trigger.oldmap.get(acc.id).phone))
+            {
+                accMap.put(acc.id,acc);
+            }
+        }
+
+        List<Contact> conlist=[Select id,phone,accountId from Contact where accountId in :accMap.keySet()];
+        List<Contact> confinal=new List<Contact>();
+        if(!conlist.isEmpty() && conlist.size()!=null)
+        {
+            for(Contact con: conlist)
+            {
+                con.phone = accMap.get(con.accountId).phone;
+                confinal.add(con);
+            }
+            UPDATE confinal
+        }
+    }
+}
+
+
+Trigger trgacc on Account(After Insert,After Update)
+{
+    List<Contact> confinal=new List<Contact>();
+    if(trigger.isAfter && (trigger.isInsert || trigger.isUpdate))
+    {
+        for(Account acc:Trigger.new)
+        {
+            if(acc.checked==true && acc.checked!=Trigger.oldmap.get(acc.id).checked)
+            {
+               Contact con=new Contact();
+               con.name= 'test '+ acc.name;
+               con.accountid = acc.id
+               con.phone = acc.phone;
+               confinal.add(con);
+            }
+        }
+    if(!confinal.isEmpty())
+    {
+        INSERT conlist;
+    }
+    }   
+}
+

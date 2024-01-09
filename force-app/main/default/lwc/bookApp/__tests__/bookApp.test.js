@@ -1,7 +1,7 @@
-import { createElement } from 'lwc';
+import {createElement} from 'lwc';
 import BookApp from 'c/bookApp';
 
-describe('c-book-app', () => {
+    describe('c-book-app', () => {
     afterEach(() => {
         // The jsdom instance is shared across test cases in a single file so reset the DOM
         while (document.body.firstChild) {

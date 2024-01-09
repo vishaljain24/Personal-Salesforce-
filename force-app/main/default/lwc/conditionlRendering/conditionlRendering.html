@@ -3,7 +3,7 @@
     <lightning-card title="Conditional Rendering">
         <div class="slds-m-around_medium">
             <lightning-button variant="Brand" label="Click Here" onclick={handleState} title="Show Data"></lightning-button>
->        </div>
+        </div>
         
         <template lwc:if={IsVisible}>
             <div class="slds-m-around_medium">This is Hidden Statement</div>
@@ -12,9 +12,11 @@
         <template lwc:else>
             <div class="slds-m-around_medium">This is default Statement</div>
         </template>
+
         <div class="slds-m-around_medium">
-        <lightning-input type="text" onkeyup={handleProp} label="Enter Text"></lightning-input>
+            <lightning-input type="text" onkeyup={handleProp} label="Enter Text"></lightning-input>
         </div>
+
         <template if:true={ansMethod}>
             <div class="slds-m-around_medium"> Hurray!!! You had Entered Correct Statment</div>
         </template>

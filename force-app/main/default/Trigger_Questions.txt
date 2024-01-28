@@ -106,12 +106,12 @@ Trigger backObjectTrg on Facility(before update)
     {
         for(Facility fac:Trigger.old)
         {
-        if((fac.name != Trigger.newmap.get(fac.id).name) &&
-            (fac.email != Trigger.newmap.get(fac.id).email__c))
-            Facility_backup__c back=new Facility_backup__c();
-            back.name=fac.name;
-            back.email=fac.email;
-            listfc.add(back);
+            if((fac.name != Trigger.newmap.get(fac.id).name) &&
+                (fac.email != Trigger.newmap.get(fac.id).email__c))
+                Facility_backup__c back=new Facility_backup__c();
+                back.name=fac.name;
+                back.email=fac.email;
+                listfc.add(back);
         }
     insert listfc;
     }

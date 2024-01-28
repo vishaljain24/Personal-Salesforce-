@@ -13,7 +13,7 @@ export default class LoopingTemplate extends LightningElement
         {
             id:2,
             name:'BMW',
-            speed:200
+            speed:280
         },
         {
             id:3,

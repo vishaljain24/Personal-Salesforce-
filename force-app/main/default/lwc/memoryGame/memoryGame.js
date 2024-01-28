@@ -85,7 +85,8 @@ export default class MemoryGameLwc extends LightningElement {
                       item.classList.remove('disabled')
                   }
               }
-              if(action === 'DISABLE'){
+              if(action === 'DISABLE')
+              {
                   item.classList.add('disabled')
               }
           })

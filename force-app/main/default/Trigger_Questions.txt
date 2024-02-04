@@ -418,7 +418,7 @@ Trigger accphone on Account(after insert,after update)
             accmap.put(acc.id,acc);
     }
 
-    List<Contact> conlist=[Select id from Contacts where accountID = :accmap.keyset()];
+    List<Contact> conlist=[Select id,phone from Contacts where accountID = :accmap.keyset()];
     List<Contact> finalupdate=new List<Contact>();
     for(Contact con: conlist) 
     {
@@ -479,4 +479,6 @@ Trigger trgacc on Account(After Insert,After Update)
     }
     }   
 }
+
+///////////////////////////////////////////////////////////////
 

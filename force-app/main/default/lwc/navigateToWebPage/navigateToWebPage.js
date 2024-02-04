@@ -6,9 +6,10 @@ export default class NavigateToWebPage extends NavigationMixin(LightningElement)
     {
         this[NavigationMixin.Navigate]({
             type:"standard__webPage",
-            attributes:{
-            url:"https://www.linkedin.com/in/vishal-jain-61a542172/"
-            }
+            attributes:
+                {
+                    url:"https://www.linkedin.com/in/vishal-jain-61a542172/"
+                }
         })
     }
 }

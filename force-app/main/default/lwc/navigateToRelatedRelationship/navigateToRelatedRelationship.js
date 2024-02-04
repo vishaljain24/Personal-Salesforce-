@@ -6,7 +6,8 @@ export default class NavigateToRelatedRelationship extends NavigationMixin(Light
     {
         this[NavigationMixin.Navigate]({
             type:'standard__recordRelationshipPage',
-            attributes:{
+            attributes:
+            {
                 recordId:'0015j00000Or3i4AAB',
                 objectApiName:'Account',
                 relationshipApiName:'Opportunities',

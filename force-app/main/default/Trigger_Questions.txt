@@ -482,3 +482,5 @@ Trigger trgacc on Account(After Insert,After Update)
 
 ///////////////////////////////////////////////////////////////
 
+List<AggregateResult> result=[Select accountId, Max(salary) maxsal, MIN(salary) minsal from Contact where 
+                                    accountID =:accset.keySet() group by accountId]
